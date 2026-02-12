@@ -1,0 +1,36 @@
+# ============================================
+# Kubernetes ConfigMap
+# ============================================
+# Armazena configurações não-sensíveis
+# Similar ao .env, mas para Kubernetes
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: java-santander-config
+  labels:
+    app: java-santander
+data:
+  # Configurações da aplicação
+  SPRING_PROFILES_ACTIVE: "kubernetes"
+  SERVER_PORT: "8080"
+  
+  # Configurações do Santander API (exemplo)
+  SANTANDER_API_BASE_URL: "https://api.santander.com.br"
+  
+  # Logging
+  LOGGING_LEVEL_ROOT: "INFO"
+  LOGGING_LEVEL_COM_SANTANDER: "DEBUG"
+
+---
+# ============================================
+# Para usar no Deployment:
+# ============================================
+# 
+# No deployment.yaml, adicione:
+# 
+# envFrom:
+# - configMapRef:
+#     name: java-santander-config
+#
+# Isso injeta todas as variáveis do ConfigMap

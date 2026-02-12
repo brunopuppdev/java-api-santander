@@ -1,0 +1,111 @@
+# ============================================
+# Kubernetes Deployment
+# ============================================
+# Define como a aplicação será implantada no Kubernetes
+# Similar ao docker-compose, mas para K8s
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-santander-app
+  labels:
+    app: java-santander
+    version: v1
+spec:
+  # Número de réplicas (instâncias) da aplicação
+  replicas: 2
+  
+  # Estratégia de atualização
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  
+  # Seletor para identificar os pods
+  selector:
+    matchLabels:
+      app: java-santander
+  
+  # Template do pod (container)
+  template:
+    metadata:
+      labels:
+        app: java-santander
+        version: v1
+    spec:
+      containers:
+      - name: java-santander
+        # Imagem Docker (substitua pelo seu registry)
+        # Exemplo: seu-registry.com/java-santander:latest
+        image: java-santander:latest
+        imagePullPolicy: IfNotPresent
+        
+        # Porta do container
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        
+        # Variáveis de ambiente do ConfigMap
+        envFrom:
+        - configMapRef:
+            name: java-santander-config
+        
+        # Variáveis de ambiente específicas
+        env:
+        - name: JAVA_OPTS
+          value: "-Xmx512m -Xms256m"
+        
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /api/actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /api/actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        
+        # Recursos (CPU e memória)
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+# ============================================
+# EXPLICAÇÃO:
+# ============================================
+# 
+# replicas: 2
+#   - Cria 2 instâncias da aplicação
+#   - Para alta disponibilidade
+#
+# strategy: RollingUpdate
+#   - Atualiza sem downtime
+#   - Cria novo pod antes de remover o antigo
+#
+# livenessProbe:
+#   - Verifica se a aplicação está viva
+#   - Se falhar, reinicia o pod
+#
+# readinessProbe:
+#   - Verifica se a aplicação está pronta
+#   - Só recebe tráfego quando estiver pronta
+#
+# resources:
+#   - Define limites de CPU e memória
+#   - Evita que um pod consuma todos os recursos

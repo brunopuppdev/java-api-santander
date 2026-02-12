@@ -1,0 +1,93 @@
+# ============================================
+# docker-compose.yml - Orquestração de containers
+# ============================================
+# Facilita rodar múltiplos serviços juntos
+# Útil para desenvolvimento e testes
+
+version: '3.8'
+
+services:
+  # ============================================
+  # SERVIÇO: Aplicação Spring Boot
+  # ============================================
+  app:
+    # Nome do serviço
+    container_name: java-santander-app
+    
+    # Usa o Dockerfile para construir a imagem
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # Porta: expõe 8080 do container na porta 8080 do host
+    ports:
+      - "8080:8080"
+    
+    # Variáveis de ambiente
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xmx512m -Xms256m
+    
+    # Restart policy: reinicia se o container parar
+    restart: unless-stopped
+    
+    # Health check: verifica se a aplicação está saudável
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/api/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Nome da rede (opcional)
+    networks:
+      - santander-network
+
+  # ============================================
+  # EXEMPLO: Banco de Dados (descomente se precisar)
+  # ============================================
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: java-santander-db
+  #   environment:
+  #     POSTGRES_DB: santander
+  #     POSTGRES_USER: santander
+  #     POSTGRES_PASSWORD: santander123
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - santander-network
+
+# ============================================
+# REDES
+# ============================================
+networks:
+  santander-network:
+    driver: bridge
+
+# ============================================
+# VOLUMES (para dados persistentes)
+# ============================================
+# volumes:
+#   postgres-data:
+
+# ============================================
+# COMANDOS ÚTEIS:
+# ============================================
+# 
+# Construir e iniciar:
+#   docker-compose up --build
+#
+# Iniciar em background:
+#   docker-compose up -d
+#
+# Parar:
+#   docker-compose down
+#
+# Ver logs:
+#   docker-compose logs -f app
+#
+# Reconstruir:
+#   docker-compose build --no-cache

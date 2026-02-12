@@ -1,0 +1,54 @@
+# ============================================
+# Kubernetes Ingress
+# ============================================
+# Roteamento HTTP/HTTPS para o cluster
+# Permite acessar via domínio (ex: api.santander.com)
+# 
+# NOTA: Requer um Ingress Controller instalado
+# (nginx-ingress, traefik, etc.)
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: java-santander-ingress
+  annotations:
+    # Anotação para nginx-ingress
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # SSL redirect (força HTTPS)
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  # Regras de roteamento
+  rules:
+  - host: api.santander.local  # Substitua pelo seu domínio
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: java-santander-service
+            port:
+              number: 80
+  
+  # TLS/SSL (descomente se tiver certificado)
+  # tls:
+  # - hosts:
+  #   - api.santander.local
+  #   secretName: santander-tls
+
+---
+# ============================================
+# EXPLICAÇÃO:
+# ============================================
+# 
+# Ingress permite:
+# - Acessar via domínio (não precisa de IP)
+# - SSL/TLS (HTTPS)
+# - Roteamento baseado em path
+#
+# Exemplo de acesso:
+#   http://api.santander.local/api/santander/health
+#
+# Requer:
+# - Ingress Controller instalado no cluster
+# - DNS configurado (ou /etc/hosts para local)

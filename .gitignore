@@ -1,0 +1,100 @@
+# ============================================
+# .gitignore - Arquivos que o Git vai ignorar
+# ============================================
+# Similar ao .gitignore do Node.js
+# Define o que NÃO vai para o repositório
+
+# ============================================
+# ARQUIVOS COMPILADOS DO JAVA
+# ============================================
+# Arquivos .class são o código compilado (bytecode)
+# Não precisamos versionar, são gerados automaticamente
+*.class
+
+# ============================================
+# PASTA TARGET (Maven)
+# ============================================
+# Similar ao node_modules no Node.js
+# Contém arquivos compilados, JARs, dependências baixadas
+target/
+!target/.gitkeep
+
+# ============================================
+# ARQUIVOS DO MAVEN
+# ============================================
+# Arquivos temporários do Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ============================================
+# IDEs (Editores de Código)
+# ============================================
+# Arquivos gerados por IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+bin/
+
+# ============================================
+# SISTEMA OPERACIONAL
+# ============================================
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ============================================
+# LOGS
+# ============================================
+# Arquivos de log
+*.log
+logs/
+
+# ============================================
+# ARQUIVOS DE CONFIGURAÇÃO LOCAL
+# ============================================
+# Configurações específicas do ambiente local
+# (não devem ir para o repositório)
+application-local.properties
+application-dev.properties
+application-local.yml
+application-dev.yml
+
+# ============================================
+# DOCKER
+# ============================================
+# Arquivos temporários do Docker (se houver)
+.dockerignore
+
+# ============================================
+# SECRETOS E CREDENCIAIS
+# ============================================
+# NUNCA commitar credenciais!
+*.key
+*.pem
+*.p12
+secrets/
+.env
+.env.local
+
+# ============================================
+# ARQUIVOS TEMPORÁRIOS
+# ============================================
+*.tmp
+*.temp
+*.bak
+*.backup

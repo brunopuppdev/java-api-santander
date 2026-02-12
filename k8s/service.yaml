@@ -1,0 +1,48 @@
+# ============================================
+# Kubernetes Service
+# ============================================
+# Expõe a aplicação dentro do cluster Kubernetes
+# Permite que outros serviços acessem a aplicação
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: java-santander-service
+  labels:
+    app: java-santander
+spec:
+  # Tipo de serviço
+  type: ClusterIP  # Apenas dentro do cluster
+  # type: LoadBalancer  # Expõe externamente (cloud)
+  # type: NodePort      # Expõe em porta do nó
+  
+  # Porta do serviço
+  ports:
+  - port: 80        # Porta do serviço
+    targetPort: 8080  # Porta do container
+    protocol: TCP
+    name: http
+  
+  # Seletor: conecta ao deployment
+  selector:
+    app: java-santander
+
+---
+# ============================================
+# EXPLICAÇÃO:
+# ============================================
+# 
+# type: ClusterIP
+#   - Acessível apenas dentro do cluster
+#   - Outros pods podem acessar via nome do serviço
+#   - URL: http://java-santander-service/api/...
+#
+# type: LoadBalancer
+#   - Cria um load balancer externo (AWS, Azure, GCP)
+#   - Acessível de fora do cluster
+#   - Usa o IP público do load balancer
+#
+# type: NodePort
+#   - Expõe em uma porta de cada nó
+#   - Acessível via IP do nó + porta
+#   - Útil para desenvolvimento
